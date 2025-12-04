@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { query } from "../config/prisma";
 import { exportCSV } from "../utils/csvExport";
-import { Console } from "console";
-import { STATUS_CODES } from "http";
 
 
 class ExpenseController {
@@ -52,8 +50,8 @@ class ExpenseController {
 
             const result = await query(
                 `INSERT INTO expenses (title, amount, category_id, created_by, date)
-                 VALUES ($1, $2, $3, $4, $5)
-                 RETURNING id, title, amount, category_id, created_by, date`,
+                VALUES ($1, $2, $3, $4, $5)
+                RETURNING id, title, amount, category_id, created_by, date`,
                 [title, amount, categoryId, userId, new Date(date)]
             );
 
@@ -81,9 +79,9 @@ class ExpenseController {
 
             const result = await query(
                 `UPDATE expenses
-                 SET ${fields.join(", ")}
-                 WHERE id = $${paramIndex++} AND created_by = $${paramIndex}
-                 RETURNING id, title, amount, category_id, created_by, date`,
+                SET ${fields.join(", ")}
+                WHERE id = $${paramIndex++} AND created_by = $${paramIndex}
+                RETURNING id, title, amount, category_id, created_by, date`,
                 values
             );
 
@@ -100,7 +98,7 @@ class ExpenseController {
 
             await query(
                 `DELETE FROM expenses
-                 WHERE id = $1 AND created_by = $2`,
+                WHERE id = $1 AND created_by = $2`,
                 [Number(id), userId]
             );
 
@@ -117,10 +115,10 @@ class ExpenseController {
             const result = await query(
                 `SELECT e.id, e.title, e.amount, e.category_id, e.created_by, e.date,
                         c.id as category_id, c.name as category_name
-                 FROM expenses e
-                 LEFT JOIN categories c ON e.category_id = c.id
-                 WHERE e.created_by = $1
-                 ORDER BY e.date DESC`,
+                FROM expenses e
+                LEFT JOIN categories c ON e.category_id = c.id
+                WHERE e.created_by = $1
+                ORDER BY e.date DESC`,
                 [userId]
             );
 

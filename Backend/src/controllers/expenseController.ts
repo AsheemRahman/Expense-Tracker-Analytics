@@ -71,26 +71,42 @@ class ExpenseController {
             const values: any[] = [];
             let paramIndex = 1;
 
+            const dbFieldMap: Record<string, string> = {
+                categoryId: "category_id",
+                date: "date",
+                title: "title",
+                amount: "amount"
+            };
+
             for (const [key, value] of Object.entries(req.body)) {
-                fields.push(`${key} = $${paramIndex++}`);
+                const dbKey = dbFieldMap[key];
+
+                if (!dbKey) continue;
+
+                fields.push(`${dbKey} = $${paramIndex}`);
                 values.push(value);
+                paramIndex++;
             }
 
-            values.push(Number(id), userId);
+            values.push(Number(id));
+            values.push(userId);
 
-            const result = await query(
-                `UPDATE expenses
-                SET ${fields.join(", ")}
-                WHERE id = $${paramIndex++} AND created_by = $${paramIndex}
-                RETURNING id, title, amount, category_id, created_by, date`,
-                values
-            );
+            const sql = `
+            UPDATE expenses
+            SET ${fields.join(", ")}
+            WHERE id = $${paramIndex} AND created_by = $${paramIndex + 1}
+            RETURNING id, title, amount, category_id, created_by, date
+        `;
+
+            const result = await query(sql, values);
 
             res.json(result.rows[0]);
         } catch (error) {
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Failed to update expense", error });
+            console.error("Update expense error:", error);
+            res.status(500).json({ message: "Failed to update expense", error });
         }
     }
+
 
     async deleteExpense(req: Request, res: Response): Promise<void> {
         try {

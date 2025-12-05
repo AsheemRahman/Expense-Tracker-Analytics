@@ -13,10 +13,5 @@ export const ERROR_MESSAGES = {
     TOKEN_NOT_FOUND: "Token not found.",
     INVALID_TOKEN: "Invalid token.",
     EXPIRED_TOKEN: "Token expired.",
-    REFRESH_TOKEN_NOT_FOUND: "Refresh token not found.",
-    REFRESH_TOKEN_EXPIRED: "Refresh token expired.",
-    REFRESH_TOKEN_INVALID: "Refresh token invalid.",
-    REFRESH_TOKEN_USED: "Refresh token used.",
-    REFRESH_TOKEN_REVOKED: "Refresh token revoked.",
-    REFRESH_TOKEN_BLACKLISTED: "Refresh token blacklisted.",
+
 } as const;

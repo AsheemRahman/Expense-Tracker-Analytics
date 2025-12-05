@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { query } from "../config/prisma";
 import { exportCSV } from "../utils/csvExport";
+import { STATUS_CODES } from "../constants/statusCode";
 
 
 class ExpenseController {
@@ -36,10 +37,10 @@ class ExpenseController {
                 ORDER BY e.date DESC`,
                 params
             );
-            res.status(200).json(result.rows);
+            res.status(STATUS_CODES.OK).json(result.rows);
         } catch (error) {
             console.error("GET EXPENSES ERROR:", error);
-            res.status(500).json({ message: "Failed to fetch expenses", error });
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Failed to fetch expenses", error });
         }
     };
 
@@ -55,7 +56,7 @@ class ExpenseController {
                 [title, amount, categoryId, userId, new Date(date)]
             );
 
-            res.status(201).json(result.rows[0]);
+            res.status(STATUS_CODES.CREATED).json(result.rows[0]);
         } catch (error) {
             res.status(500).json({ message: "Failed to create expense", error });
         }
@@ -87,7 +88,7 @@ class ExpenseController {
 
             res.json(result.rows[0]);
         } catch (error) {
-            res.status(500).json({ message: "Failed to update expense", error });
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Failed to update expense", error });
         }
     }
 
@@ -104,7 +105,7 @@ class ExpenseController {
 
             res.json({ message: "Deleted" });
         } catch (error) {
-            res.status(500).json({ message: "Failed to delete expense", error });
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Failed to delete expense", error });
         }
     }
 
@@ -127,7 +128,7 @@ class ExpenseController {
             res.setHeader("Content-Disposition", "attachment; filename=expenses.csv");
             res.send(csv);
         } catch (error) {
-            res.status(500).json({ message: "Failed to export expenses", error });
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Failed to export expenses", error });
         }
     }
 }

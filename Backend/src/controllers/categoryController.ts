@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { query } from "../config/prisma";
+import { STATUS_CODES } from "../constants/statusCode";
 
 
 class CategoryController {
@@ -16,7 +17,7 @@ class CategoryController {
 
             res.json(result.rows);
         } catch (error) {
-            res.status(500).json({ message: "Failed to fetch categories", error });
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Failed to fetch categories", error });
         }
     }
 
@@ -32,9 +33,9 @@ class CategoryController {
                 [name, userId]
             );
 
-            res.status(201).json(result.rows[0]);
+            res.status(STATUS_CODES.CREATED).json(result.rows[0]);
         } catch (error) {
-            res.status(500).json({ message: "Failed to create category", error });
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Failed to create category", error });
         }
     }
 }
